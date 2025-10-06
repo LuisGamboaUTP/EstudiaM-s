@@ -37,6 +37,20 @@ public class AdminController {
         return "administrador/dashboard";
     }
 
+    // Endpoint para obtener estudiantes en JSON (para el dashboard)
+    @GetMapping("/students")
+    @ResponseBody
+    public List<Student> getAllStudents() {
+        return studentService.findAll();
+    }
+
+    // Endpoint para obtener profesores en JSON (para el dashboard)
+    @GetMapping("/profesores")
+    @ResponseBody
+    public List<Professor> getAllProfessors() {
+        return professorService.findAll();
+    }
+
     // Nuevo endpoint para crear estudiante (JSON)
     @PostMapping("/students")
     @ResponseBody

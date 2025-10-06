@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -38,6 +40,14 @@
 
         .modal-backdrop {
             background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-card {
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
         }
     </style>
 </head>
@@ -151,8 +161,64 @@
 
                 <!-- Vista Dashboard (Oculta por defecto) -->
                 <main id="dashboard-content" class="content-view hidden">
-                    <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
-                    <p class="mt-2 text-gray-600">Vista general del sistema.</p>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+
+                    <!-- Tarjetas de estadísticas -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 font-medium">Total Estudiantes</p>
+                                    <p id="total-students" class="text-3xl font-bold text-gray-800 mt-2">-</p>
+                                </div>
+                                <div class="bg-blue-100 p-3 rounded-full">
+                                    <i data-lucide="users" class="w-8 h-8 text-blue-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 font-medium">Total Profesores</p>
+                                    <p id="total-teachers" class="text-3xl font-bold text-gray-800 mt-2">-</p>
+                                </div>
+                                <div class="bg-purple-100 p-3 rounded-full">
+                                    <i data-lucide="graduation-cap" class="w-8 h-8 text-purple-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 font-medium">Cursos Activos</p>
+                                    <p id="total-courses" class="text-3xl font-bold text-gray-800 mt-2">-</p>
+                                </div>
+                                <div class="bg-orange-100 p-3 rounded-full">
+                                    <i data-lucide="book-marked" class="w-8 h-8 text-orange-600"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 font-medium">Total Registrados</p>
+                                    <p id="total-users" class="text-3xl font-bold text-gray-800 mt-2">-</p>
+                                </div>
+                                <div class="bg-green-100 p-3 rounded-full">
+                                    <i data-lucide="user-check" class="w-8 h-8 text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico principal -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Distribución de Usuarios</h2>
+                        <canvas id="usersDistributionChart" style="max-height: 400px;"></canvas>
+                    </div>
                 </main>
 
                 <!-- Vista Gestión de Estudiantes (Visible por defecto) -->
@@ -244,13 +310,16 @@
                             <tbody>
                                 <!-- Itera los profesores desde el modelo -->
                                 <tr th:each="p : ${professors}" class="bg-white border-b hover:bg-gray-50">
-                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap" th:text="${p.nombre}">Nombre</td>
+                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                                        th:text="${p.nombre}">Nombre</td>
                                     <td class="px-6 py-4" th:text="${p.codigo}">Código</td>
                                     <td class="px-6 py-4" th:text="${p.email}">Correo</td>
                                     <td class="px-6 py-4" th:text="${p.especialidad}">Especialidad</td>
                                     <td class="px-6 py-4 text-center space-x-2">
-                                        <button class="p-2 text-blue-600 hover:bg-blue-100 rounded-full"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                                        <button class="p-2 text-red-600 hover:bg-red-100 rounded-full"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                        <button class="p-2 text-blue-600 hover:bg-blue-100 rounded-full"><i
+                                                data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                        <button class="p-2 text-red-600 hover:bg-red-100 rounded-full"><i
+                                                data-lucide="trash-2" class="w-4 h-4"></i></button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -351,20 +420,25 @@
             <div class="p-6 space-y-4">
                 <form id="add-teacher-form">
                     <div><label class="block text-sm font-medium">Nombre Completo</label>
-                        <input name="nombre" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                        <input name="nombre" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
                     <div><label class="block text-sm font-medium">Código</label>
-                        <input name="codigo" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                        <input name="codigo" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
                     <div><label class="block text-sm font-medium">Correo Electrónico</label>
-                        <input name="email" type="email" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
+                        <input name="email" type="email" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
                     <div><label class="block text-sm font-medium">Especialidad</label>
-                        <input name="especialidad" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
-                        <div><label class="block text-sm font-medium">Contraseña</label><input name="password"
+                        <input name="especialidad" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm">
+                    </div>
+                    <div><label class="block text-sm font-medium">Contraseña</label><input name="password"
                             type="password" class="mt-1 w-full border-gray-300 rounded-md shadow-sm"></div>
                 </form>
             </div>
             <div class="flex justify-end items-center p-4 border-t space-x-2">
                 <button class="close-modal-button px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Cancelar</button>
-                <button id="save-teacher-btn" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Guardar</button>
+                <button id="save-teacher-btn"
+                    class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Guardar</button>
             </div>
         </div>
     </div>
@@ -416,6 +490,96 @@
 
 
     <script>
+        let usersChart = null;
+
+        // Función para cargar datos del dashboard
+        async function loadDashboardData() {
+            try {
+                // Obtener total de estudiantes
+                const studentsRes = await fetch('/admin/students');
+                const students = await studentsRes.json();
+                document.getElementById('total-students').textContent = students.length;
+
+                // Obtener total de profesores
+                const teachersRes = await fetch('/admin/profesores');
+                const teachers = await teachersRes.json();
+                document.getElementById('total-teachers').textContent = teachers.length;
+
+                // Cursos - por ahora en 0 hasta que tengas el endpoint
+                document.getElementById('total-courses').textContent = '0';
+
+                // Total de usuarios registrados
+                const totalUsers = students.length + teachers.length;
+                document.getElementById('total-users').textContent = totalUsers;
+
+                // Crear gráfico de distribución
+                createUsersDistributionChart(students.length, teachers.length);
+
+            } catch (error) {
+                console.error('Error cargando datos del dashboard:', error);
+                // Mostrar 0 en caso de error
+                document.getElementById('total-students').textContent = '0';
+                document.getElementById('total-teachers').textContent = '0';
+                document.getElementById('total-courses').textContent = '0';
+                document.getElementById('total-users').textContent = '0';
+            }
+        }
+
+        // Función para crear el gráfico de distribución de usuarios
+        function createUsersDistributionChart(studentsCount, teachersCount) {
+            const ctx = document.getElementById('usersDistributionChart');
+
+            // Destruir gráfico anterior si existe
+            if (usersChart) {
+                usersChart.destroy();
+            }
+
+            usersChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Estudiantes', 'Profesores'],
+                    datasets: [{
+                        data: [studentsCount, teachersCount],
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(168, 85, 247, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(168, 85, 247, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
 
@@ -443,6 +607,11 @@
                     contentViews.forEach(view => {
                         if (view.id === `${targetId}-content`) {
                             view.classList.remove('hidden');
+
+                            // Si es dashboard, cargar los datos
+                            if (targetId === 'dashboard') {
+                                loadDashboardData();
+                            }
                         } else {
                             view.classList.add('hidden');
                         }
@@ -542,7 +711,7 @@
                     const payload = Object.fromEntries(formData.entries());
 
                     // Ajusta la URL según tu controlador backend (ej: /admin/profesores)
-                    const res = await fetch('/teacher', {
+                    const res = await fetch('/admin/profesores', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
