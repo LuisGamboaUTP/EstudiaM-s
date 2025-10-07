@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Portal del Profesor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-icon {
+            width: 24px;
+            height: 24px;
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="flex h-screen">
+        <!-- Barra de navegación lateral (Sidebar) -->
+        <aside id="sidebar" class="bg-gray-800 text-white w-64 min-h-screen p-4 flex-col justify-between hidden md:flex transition-all duration-300">
+            <div>
+                <a th:href="@{/teacher/dashboard}" href="/profesor/dashboard" class="flex items-center space-x-2 text-2xl font-bold mb-10 text-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>UTP+teacher</span>
+                </a>
+                <nav>
+                    <ul class="space-y-2">
+                        <li>
+                            <a th:href="@{/teacher/dashboard}" href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="book-marked" class="sidebar-icon"></i>
+                                <span>Mis Cursos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/chat}" href="chat.html" class="nav-link flex items-center space-x-3 px-4 py-3 bg-orange-500 rounded-lg text-white font-semibold">
+                                <i data-lucide="message-square" class="sidebar-icon"></i>
+                                <span>Chat</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/calendario}" href="calendario.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="calendar" class="sidebar-icon"></i>
+                                <span>Calendario</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/configuracion}" href="configuracion.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="settings" class="sidebar-icon"></i>
+                                <span>Configuración</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div>
+                 <nav>
+                    <ul class="space-y-2 border-t border-gray-700 pt-4 mt-4">
+                        <li>
+                            <a th:href="@{/logout}" href="/logout" class="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="log-out" class="sidebar-icon"></i>
+                                <span>Cerrar Sesión</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Contenido principal -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Cabecera (Header) -->
+            <header class="bg-white shadow-md p-4 flex justify-between items-center z-10">
+                <button id="menu-button" class="md:hidden"><i data-lucide="menu" class="h-6 w-6"></i></button>
+                <div class="text-xl font-semibold md:hidden text-orange-500">UTP+teacher</div>
+
+                <div class="flex items-center space-x-4 ml-auto">
+                    <button class="relative">
+                        <i data-lucide="bell" class="h-6 w-6 text-gray-600"></i>
+                        <span class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+
+                    <div class="flex items-center space-x-2">
+                        <img src="https://placehold.co/40x40/EFEFEF/333333?text=JP" alt="Avatar de profesor" class="w-10 h-10 rounded-full">
+                        <div class="flex flex-col leading-tight">
+                            <p class="font-semibold text-sm">Hola, Luis Francisco</p>
+                            <p class="text-xs text-gray-500">Profesor</p>
+                        </div>
+                        <i data-lucide="chevron-down" class="h-5 w-5 text-gray-500"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenido de Chat -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Chat</h1>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <!-- Lista de conversaciones -->
+                        <div class="w-full md:w-1/3 border-r border-gray-200 pr-4">
+                            <div class="mb-4">
+                                <input type="text" placeholder="Buscar conversaciones..." class="w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <div class="space-y-3">
+                                <!-- Conversación 1 -->
+                                <div class="p-3 bg-orange-50 rounded-lg cursor-pointer">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://placehold.co/40x40/3B82F6/FFFFFF?text=ES" alt="Estudiante" class="w-10 h-10 rounded-full">
+                                        <div class="flex-1">
+                                            <p class="font-semibold">Estudiante 1</p>
+                                            <p class="text-sm text-gray-500 truncate">Tengo una duda sobre la tarea de HTML...</p>
+                                        </div>
+                                        <div class="text-xs text-gray-500">10:30</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Conversación 2 -->
+                                <div class="p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://placehold.co/40x40/10B981/FFFFFF?text=ES" alt="Estudiante" class="w-10 h-10 rounded-full">
+                                        <div class="flex-1">
+                                            <p class="font-semibold">Estudiante 2</p>
+                                            <p class="text-sm text-gray-500 truncate">¿Podría revisar mi código?</p>
+                                        </div>
+                                        <div class="text-xs text-gray-500">Ayer</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Conversación 3 -->
+                                <div class="p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://placehold.co/40x40/8B5CF6/FFFFFF?text=ES" alt="Estudiante" class="w-10 h-10 rounded-full">
+                                        <div class="flex-1">
+                                            <p class="font-semibold">Estudiante 3</p>
+                                            <p class="text-sm text-gray-500 truncate">Gracias por la explicación</p>
+                                        </div>
+                                        <div class="text-xs text-gray-500">Lun</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Área de mensajes -->
+                        <div class="w-full md:w-2/3">
+                            <div class="flex flex-col h-[500px]">
+                                <!-- Cabecera de chat -->
+                                <div class="border-b border-gray-200 pb-3 mb-4">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://placehold.co/40x40/3B82F6/FFFFFF?text=ES" alt="Estudiante" class="w-10 h-10 rounded-full">
+                                        <div>
+                                            <p class="font-semibold">Estudiante 1</p>
+                                            <p class="text-sm text-gray-500">En línea</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Mensajes -->
+                                <div class="flex-1 overflow-y-auto space-y-4 mb-4">
+                                    <!-- Mensaje recibido -->
+                                    <div class="flex items-start space-x-2">
+                                        <img src="https://placehold.co/40x40/3B82F6/FFFFFF?text=ES" alt="Estudiante" class="w-8 h-8 rounded-full mt-1">
+                                        <div class="bg-gray-100 rounded-lg p-3 max-w-xs">
+                                            <p class="text-sm">Buenos días profesor, tengo una duda sobre la tarea de HTML</p>
+                                            <p class="text-xs text-gray-500 mt-1">10:30</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Mensaje enviado -->
+                                    <div class="flex items-start space-x-2 justify-end">
+                                        <div class="bg-orange-100 rounded-lg p-3 max-w-xs">
+                                            <p class="text-sm">¡Hola! Claro, dime en qué puedo ayudarte</p>
+                                            <p class="text-xs text-gray-500 mt-1">10:32</p>
+                                        </div>
+                                        <img src="https://placehold.co/40x40/EFEFEF/333333?text=JP" alt="Profesor" class="w-8 h-8 rounded-full mt-1">
+                                    </div>
+                                    
+                                    <!-- Mensaje recibido -->
+                                    <div class="flex items-start space-x-2">
+                                        <img src="https://placehold.co/40x40/3B82F6/FFFFFF?text=ES" alt="Estudiante" class="w-8 h-8 rounded-full mt-1">
+                                        <div class="bg-gray-100 rounded-lg p-3 max-w-xs">
+                                            <p class="text-sm">No entiendo cómo aplicar los estilos CSS a mi página web</p>
+                                            <p class="text-xs text-gray-500 mt-1">10:33</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Input de mensaje -->
+                                <div class="flex space-x-2">
+                                    <input type="text" placeholder="Escribe un mensaje..." class="flex-1 p-3 border border-gray-300 rounded-lg">
+                                    <button class="bg-orange-500 text-white p-3 rounded-lg hover:bg-orange-600 transition-colors">
+                                        <i data-lucide="send" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            const menuButton = document.getElementById('menu-button');
+            const sidebar = document.getElementById('sidebar');
+
+            // Toggle sidebar en móvil
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('absolute');
+                sidebar.classList.toggle('z-20');
+                sidebar.classList.toggle('w-full');
+            });
+        });
+    </script>
+</body>
+</html>

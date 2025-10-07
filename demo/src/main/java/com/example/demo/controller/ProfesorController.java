@@ -35,6 +35,58 @@ public class ProfesorController {
         return "redirect:/login?error=no_profesor";
     }
 
+    @GetMapping("/calendario")
+    public String calendario(Model model, Authentication authentication) {
+        String email = (authentication != null) ? authentication.getName() : null;
+        if (email != null) {
+            Optional<Professor> opt = service.findByEmail(email);
+            if (opt.isPresent()) {
+                model.addAttribute("profesor", opt.get());
+                return "profesor/calendario";
+            }
+        }
+        return "redirect:/login?error=no_profesor";
+    }
+
+    @GetMapping("/chat")
+    public String chat(Model model, Authentication authentication) {
+        String email = (authentication != null) ? authentication.getName() : null;
+        if (email != null) {
+            Optional<Professor> opt = service.findByEmail(email);
+            if (opt.isPresent()) {
+                model.addAttribute("profesor", opt.get());
+                return "profesor/chat";
+            }
+        }
+        return "redirect:/login?error=no_profesor";
+    }
+
+    @GetMapping("/configuracion")
+    public String configuracion(Model model, Authentication authentication) {
+        String email = (authentication != null) ? authentication.getName() : null;
+        if (email != null) {
+            Optional<Professor> opt = service.findByEmail(email);
+            if (opt.isPresent()) {
+                model.addAttribute("profesor", opt.get());
+                return "profesor/configuracion";
+            }
+        }
+        return "redirect:/login?error=no_profesor";
+    }
+
+    @GetMapping("/gestion-curso")
+    public String gestionCurso(Model model, Authentication authentication) {
+        String email = (authentication != null) ? authentication.getName() : null;
+        if (email != null) {
+            Optional<Professor> opt = service.findByEmail(email);
+            if (opt.isPresent()) {
+                model.addAttribute("profesor", opt.get());
+                return "profesor/gestion-curso";
+            }
+        }
+        return "redirect:/login?error=no_profesor";
+    }
+
     @GetMapping
     public List<Professor> all() {
         return service.getAll();

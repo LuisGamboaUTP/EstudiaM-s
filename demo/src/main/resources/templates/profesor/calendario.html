@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario - Portal del Profesor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-icon {
+            width: 24px;
+            height: 24px;
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="flex h-screen">
+        <!-- Barra de navegación lateral (Sidebar) -->
+        <aside id="sidebar" class="bg-gray-800 text-white w-64 min-h-screen p-4 flex-col justify-between hidden md:flex transition-all duration-300">
+            <div>
+                <a th:href="@{/teacher/dashboard}" href="/profesor/dashboard" class="flex items-center space-x-2 text-2xl font-bold mb-10 text-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>UTP+teacher</span>
+                </a>
+                <nav>
+                    <ul class="space-y-2">
+                        <li>
+                            <a th:href="@{/teacher/dashboard}" href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="book-marked" class="sidebar-icon"></i>
+                                <span>Mis Cursos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/chat}" href="chat.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="message-square" class="sidebar-icon"></i>
+                                <span>Chat</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/calendario}" href="calendario.html" class="nav-link flex items-center space-x-3 px-4 py-3 bg-orange-500 rounded-lg text-white font-semibold">
+                                <i data-lucide="calendar" class="sidebar-icon"></i>
+                                <span>Calendario</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/configuracion}" href="configuracion.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="settings" class="sidebar-icon"></i>
+                                <span>Configuración</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div>
+                 <nav>
+                    <ul class="space-y-2 border-t border-gray-700 pt-4 mt-4">
+                        <li>
+                            <a th:href="@{/logout}" href="/logout" class="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="log-out" class="sidebar-icon"></i>
+                                <span>Cerrar Sesión</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Contenido principal -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Cabecera (Header) -->
+            <header class="bg-white shadow-md p-4 flex justify-between items-center z-10">
+                <button id="menu-button" class="md:hidden"><i data-lucide="menu" class="h-6 w-6"></i></button>
+                <div class="text-xl font-semibold md:hidden text-orange-500">UTP+teacher</div>
+
+                <div class="flex items-center space-x-4 ml-auto">
+                    <button class="relative">
+                        <i data-lucide="bell" class="h-6 w-6 text-gray-600"></i>
+                        <span class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+
+                    <div class="flex items-center space-x-2">
+                        <img src="https://placehold.co/40x40/EFEFEF/333333?text=JP" alt="Avatar de profesor" class="w-10 h-10 rounded-full">
+                        <div class="flex flex-col leading-tight">
+                            <p class="font-semibold text-sm">Hola, Luis Francisco</p>
+                            <p class="text-xs text-gray-500">Profesor</p>
+                        </div>
+                        <i data-lucide="chevron-down" class="h-5 w-5 text-gray-500"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenido de Calendario -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Calendario</h1>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <!-- Controles del calendario -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center space-x-4">
+                            <button class="p-2 rounded-full hover:bg-gray-100">
+                                <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                            </button>
+                            <h2 class="text-xl font-bold">Octubre 2023</h2>
+                            <button class="p-2 rounded-full hover:bg-gray-100">
+                                <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium">Mes</button>
+                            <button class="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium">Semana</button>
+                            <button class="px-4 py-2 bg-gray-100 rounded-lg text-sm font-medium">Día</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Vista semanal del calendario -->
+                    <div class="overflow-x-auto">
+                        <div class="min-w-max">
+                            <!-- Días de la semana -->
+                            <div class="grid grid-cols-7 gap-1 mb-2">
+                                <div class="text-center font-medium text-gray-500 py-2">Lun 16</div>
+                                <div class="text-center font-medium text-gray-500 py-2">Mar 17</div>
+                                <div class="text-center font-medium text-gray-500 py-2">Mié 18</div>
+                                <div class="text-center font-medium text-gray-500 py-2">Jue 19</div>
+                                <div class="text-center font-medium text-gray-500 py-2">Vie 20</div>
+                                <div class="text-center font-medium text-gray-500 py-2">Sáb 21</div>
+                                <div class="text-center font-medium text-gray-500 py-2">Dom 22</div>
+                            </div>
+                            
+                            <!-- Horas del día -->
+                            <div class="grid grid-cols-7 gap-1">
+                                <!-- Lunes -->
+                                <div class="border border-gray-200 min-h-[600px]">
+                                    <div class="p-2 bg-orange-50 border-l-4 border-orange-500 m-2 rounded">
+                                        <p class="text-sm font-medium">Desarrollo Web</p>
+                                        <p class="text-xs text-gray-500">14:00 - 16:00</p>
+                                        <p class="text-xs text-gray-500">Aula A-302</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Martes -->
+                                <div class="border border-gray-200 min-h-[600px]">
+                                    <div class="p-2 bg-blue-50 border-l-4 border-blue-500 m-2 rounded">
+                                        <p class="text-sm font-medium">Bases de Datos</p>
+                                        <p class="text-xs text-gray-500">10:00 - 12:00</p>
+                                        <p class="text-xs text-gray-500">Aula B-105</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Miércoles -->
+                                <div class="border border-gray-200 min-h-[600px]">
+                                    <div class="p-2 bg-orange-50 border-l-4 border-orange-500 m-2 rounded">
+                                        <p class="text-sm font-medium">Desarrollo Web</p>
+                                        <p class="text-xs text-gray-500">14:00 - 16:00</p>
+                                        <p class="text-xs text-gray-500">Aula A-302</p>
+                                    </div>
+                                    <div class="p-2 bg-purple-50 border-l-4 border-purple-500 m-2 rounded">
+                                        <p class="text-sm font-medium">Reunión de Departamento</p>
+                                        <p class="text-xs text-gray-500">16:30 - 18:00</p>
+                                        <p class="text-xs text-gray-500">Sala de Conferencias</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Jueves -->
+                                <div class="border border-gray-200 min-h-[600px]">
+                                    <div class="p-2 bg-blue-50 border-l-4 border-blue-500 m-2 rounded">
+                                        <p class="text-sm font-medium">Bases de Datos</p>
+                                        <p class="text-xs text-gray-500">10:00 - 12:00</p>
+                                        <p class="text-xs text-gray-500">Aula B-105</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Viernes -->
+                                <div class="border border-gray-200 min-h-[600px]">
+                                    <div class="p-2 bg-green-50 border-l-4 border-green-500 m-2 rounded">
+                                        <p class="text-sm font-medium">Algoritmos</p>
+                                        <p class="text-xs text-gray-500">09:00 - 11:00</p>
+                                        <p class="text-xs text-gray-500">Virtual</p>
+                                    </div>
+                                    <div class="p-2 bg-red-50 border-l-4 border-red-500 m-2 rounded">
+                                        <p class="text-sm font-medium">Entrega Tarea 1</p>
+                                        <p class="text-xs text-gray-500">23:59</p>
+                                        <p class="text-xs text-gray-500">Plataforma Virtual</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Sábado -->
+                                <div class="border border-gray-200 min-h-[600px] bg-gray-50"></div>
+                                
+                                <!-- Domingo -->
+                                <div class="border border-gray-200 min-h-[600px] bg-gray-50"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            const menuButton = document.getElementById('menu-button');
+            const sidebar = document.getElementById('sidebar');
+
+            // Toggle sidebar en móvil
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('absolute');
+                sidebar.classList.toggle('z-20');
+                sidebar.classList.toggle('w-full');
+            });
+        });
+    </script>
+</body>
+</html>

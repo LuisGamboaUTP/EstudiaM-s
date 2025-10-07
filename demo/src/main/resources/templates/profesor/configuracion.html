@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Portal del Profesor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-icon {
+            width: 24px;
+            height: 24px;
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="flex h-screen">
+        <!-- Barra de navegación lateral (Sidebar) -->
+        <aside id="sidebar" class="bg-gray-800 text-white w-64 min-h-screen p-4 flex-col justify-between hidden md:flex transition-all duration-300">
+            <div>
+                <a th:href="@{/teacher/dashboard}" href="/profesor/dashboard" class="flex items-center space-x-2 text-2xl font-bold mb-10 text-orange-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>UTP+teacher</span>
+                </a>
+                <nav>
+                    <ul class="space-y-2">
+                        <li>
+                            <a th:href="@{/teacher/dashboard}" href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="book-marked" class="sidebar-icon"></i>
+                                <span>Mis Cursos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/chat}" href="chat.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="message-square" class="sidebar-icon"></i>
+                                <span>Chat</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/calendario}" href="calendario.html" class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="calendar" class="sidebar-icon"></i>
+                                <span>Calendario</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a th:href="@{/teacher/configuracion}" href="configuracion.html" class="nav-link flex items-center space-x-3 px-4 py-3 bg-orange-500 rounded-lg text-white font-semibold">
+                                <i data-lucide="settings" class="sidebar-icon"></i>
+                                <span>Configuración</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div>
+                 <nav>
+                    <ul class="space-y-2 border-t border-gray-700 pt-4 mt-4">
+                        <li>
+                            <a th:href="@{/logout}" href="/logout" class="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors">
+                                <i data-lucide="log-out" class="sidebar-icon"></i>
+                                <span>Cerrar Sesión</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Contenido principal -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Cabecera (Header) -->
+            <header class="bg-white shadow-md p-4 flex justify-between items-center z-10">
+                <button id="menu-button" class="md:hidden"><i data-lucide="menu" class="h-6 w-6"></i></button>
+                <div class="text-xl font-semibold md:hidden text-orange-500">UTP+teacher</div>
+
+                <div class="flex items-center space-x-4 ml-auto">
+                    <button class="relative">
+                        <i data-lucide="bell" class="h-6 w-6 text-gray-600"></i>
+                        <span class="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+
+                    <div class="flex items-center space-x-2">
+                        <img src="https://placehold.co/40x40/EFEFEF/333333?text=JP" alt="Avatar de profesor" class="w-10 h-10 rounded-full">
+                        <div class="flex flex-col leading-tight">
+                            <p class="font-semibold text-sm">Hola, Luis Francisco</p>
+                            <p class="text-xs text-gray-500">Profesor</p>
+                        </div>
+                        <i data-lucide="chevron-down" class="h-5 w-5 text-gray-500"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Contenido de Configuración -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Configuración</h1>
+                
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Menú lateral de configuración -->
+                        <div class="lg:col-span-1">
+                            <nav class="space-y-2">
+                                <a href="#" class="block p-3 bg-orange-50 text-orange-700 font-medium rounded-lg">Perfil</a>
+                                <a href="#" class="block p-3 hover:bg-gray-50 rounded-lg">Notificaciones</a>
+                                <a href="#" class="block p-3 hover:bg-gray-50 rounded-lg">Seguridad</a>
+                                <a href="#" class="block p-3 hover:bg-gray-50 rounded-lg">Preferencias</a>
+                                <a href="#" class="block p-3 hover:bg-gray-50 rounded-lg">Integraciones</a>
+                            </nav>
+                        </div>
+                        
+                        <!-- Contenido de configuración -->
+                        <div class="lg:col-span-2">
+                            <h2 class="text-xl font-bold mb-6">Perfil de Usuario</h2>
+                            
+                            <!-- Información personal -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold mb-4">Información Personal</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                                        <input type="text" value="Luis Francisco" class="w-full p-2 border border-gray-300 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
+                                        <input type="text" value="García Martínez" class="w-full p-2 border border-gray-300 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
+                                        <input type="email" value="luis.garcia@utp.edu.pe" class="w-full p-2 border border-gray-300 rounded-md">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                                        <input type="tel" value="+51 987 654 321" class="w-full p-2 border border-gray-300 rounded-md">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Biografía</label>
+                                        <textarea class="w-full p-2 border border-gray-300 rounded-md h-24">Profesor de Desarrollo Web con más de 10 años de experiencia en la industria. Especializado en tecnologías front-end y back-end.</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Foto de perfil -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold mb-4">Foto de Perfil</h3>
+                                <div class="flex items-center space-x-6">
+                                    <img src="https://placehold.co/100x100/EFEFEF/333333?text=JP" alt="Avatar de profesor" class="w-20 h-20 rounded-full">
+                                    <div>
+                                        <button class="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600">Cambiar Foto</button>
+                                        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium ml-2 hover:bg-gray-300">Eliminar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Configuración de notificaciones -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold mb-4">Preferencias de Notificación</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-medium">Notificaciones por correo</p>
+                                            <p class="text-sm text-gray-500">Recibir notificaciones por correo electrónico</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-medium">Recordatorios de tareas</p>
+                                            <p class="text-sm text-gray-500">Recordatorios de tareas pendientes</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                        </label>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="font-medium">Mensajes de estudiantes</p>
+                                            <p class="text-sm text-gray-500">Notificaciones de nuevos mensajes</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botones de acción -->
+                            <div class="flex justify-end space-x-4">
+                                <button class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50">Cancelar</button>
+                                <button class="px-6 py-2 bg-orange-500 text-white rounded-lg font-medium hover:bg-orange-600">Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            const menuButton = document.getElementById('menu-button');
+            const sidebar = document.getElementById('sidebar');
+
+            // Toggle sidebar en móvil
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('hidden');
+                sidebar.classList.toggle('absolute');
+                sidebar.classList.toggle('z-20');
+                sidebar.classList.toggle('w-full');
+            });
+        });
+    </script>
+</body>
+</html>
