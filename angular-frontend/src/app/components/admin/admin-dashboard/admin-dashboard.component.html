@@ -1,0 +1,152 @@
+<div class="flex h-screen bg-slate-100 text-slate-800">
+  <!-- Sidebar -->
+  <aside class="bg-gray-800 text-white w-64 min-h-screen p-4 flex-col justify-between hidden md:flex">
+    <div>
+      <a routerLink="/admin/dashboard" class="flex items-center space-x-2 text-2xl font-bold mb-10 text-orange-500">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <span>UTP+admin</span>
+      </a>
+      <nav>
+        <ul class="space-y-2">
+          <li>
+            <a (click)="setActiveSection('dashboard')" 
+               [class.bg-orange-500]="activeSection === 'dashboard'"
+               [class.text-white]="activeSection === 'dashboard'"
+               [class.font-semibold]="activeSection === 'dashboard'"
+               class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
+              <i class="w-5 h-5">📊</i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a (click)="setActiveSection('estudiantes')" 
+               [class.bg-orange-500]="activeSection === 'estudiantes'"
+               [class.text-white]="activeSection === 'estudiantes'"
+               [class.font-semibold]="activeSection === 'estudiantes'"
+               class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
+              <i class="w-5 h-5">👥</i>
+              <span>Estudiantes</span>
+            </a>
+          </li>
+          <li>
+            <a (click)="setActiveSection('profesores')" 
+               [class.bg-orange-500]="activeSection === 'profesores'"
+               [class.text-white]="activeSection === 'profesores'"
+               [class.font-semibold]="activeSection === 'profesores'"
+               class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
+              <i class="w-5 h-5">🎓</i>
+              <span>Profesores</span>
+            </a>
+          </li>
+          <li>
+            <a (click)="setActiveSection('administradores')" 
+               [class.bg-orange-500]="activeSection === 'administradores'"
+               [class.text-white]="activeSection === 'administradores'"
+               [class.font-semibold]="activeSection === 'administradores'"
+               class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
+              <i class="w-5 h-5">🛡️</i>
+              <span>Administradores</span>
+            </a>
+          </li>
+          <li>
+            <a (click)="setActiveSection('cursos')" 
+               [class.bg-orange-500]="activeSection === 'cursos'"
+               [class.text-white]="activeSection === 'cursos'"
+               [class.font-semibold]="activeSection === 'cursos'"
+               class="nav-link flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
+              <i class="w-5 h-5">📚</i>
+              <span>Cursos</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div>
+      <nav>
+        <ul class="space-y-2 border-t border-gray-700 pt-4 mt-4">
+          <li>
+            <a (click)="logout()" class="flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
+              <i class="w-5 h-5">🚪</i>
+              <span>Cerrar Sesión</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="bg-white shadow-md p-4 flex justify-between items-center z-10">
+      <div class="text-xl font-semibold text-orange-500">UTP+admin</div>
+      <div class="flex items-center space-x-4 ml-auto">
+        <div class="flex items-center space-x-2">
+          <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">
+            A
+          </div>
+          <div class="text-right hidden sm:block">
+            <p class="font-semibold text-sm">Hola, Admin</p>
+            <p class="text-xs text-gray-500">Administrador</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+      <div *ngIf="loading" class="text-center py-8">
+        <p>Cargando...</p>
+      </div>
+
+      <!-- Dashboard View -->
+      <div *ngIf="!loading && activeSection === 'dashboard' && dashboardData">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium mb-2">Estudiantes</h3>
+            <p class="text-3xl font-bold text-gray-800">{{ dashboardData.students.length || 0 }}</p>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium mb-2">Profesores</h3>
+            <p class="text-3xl font-bold text-gray-800">{{ dashboardData.professors.length || 0 }}</p>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium mb-2">Administradores</h3>
+            <p class="text-3xl font-bold text-gray-800">{{ dashboardData.admins.length || 0 }}</p>
+          </div>
+          <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-gray-500 text-sm font-medium mb-2">Cursos</h3>
+            <p class="text-3xl font-bold text-gray-800">{{ dashboardData.cursos.length || 0 }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estudiantes View -->
+      <app-estudiantes-management 
+        *ngIf="!loading && activeSection === 'estudiantes' && dashboardData"
+        [students]="dashboardData.students || []">
+      </app-estudiantes-management>
+
+      <!-- Profesores View -->
+      <app-profesores-management 
+        *ngIf="!loading && activeSection === 'profesores' && dashboardData"
+        [professors]="dashboardData.professors || []">
+      </app-profesores-management>
+
+      <!-- Administradores View -->
+      <app-admins-management 
+        *ngIf="!loading && activeSection === 'administradores' && dashboardData"
+        [admins]="dashboardData.admins || []">
+      </app-admins-management>
+
+      <!-- Cursos View -->
+      <app-cursos-management 
+        *ngIf="!loading && activeSection === 'cursos' && dashboardData"
+        [cursos]="dashboardData.cursos || []"
+        [professors]="dashboardData.professors || []">
+      </app-cursos-management>
+    </div>
+  </div>
+</div>

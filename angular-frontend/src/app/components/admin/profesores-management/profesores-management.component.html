@@ -1,0 +1,86 @@
+<div>
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Gestión de Profesores</h1>
+    <button (click)="openAddModal()" class="bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors flex items-center space-x-2 mt-4 sm:mt-0">
+      <span>+</span>
+      <span>Añadir Profesor</span>
+    </button>
+  </div>
+  <div class="bg-white rounded-lg shadow-sm overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3">Nombre</th>
+          <th scope="col" class="px-6 py-3">Código</th>
+          <th scope="col" class="px-6 py-3">Correo Electrónico</th>
+          <th scope="col" class="px-6 py-3">Especialidad</th>
+          <th scope="col" class="px-6 py-3 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let professor of professors" class="bg-white border-b hover:bg-gray-50">
+          <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ professor.nombre }}</td>
+          <td class="px-6 py-4">{{ professor.codigo }}</td>
+          <td class="px-6 py-4">{{ professor.email }}</td>
+          <td class="px-6 py-4">{{ professor.especialidad || 'N/A' }}</td>
+          <td class="px-6 py-4 text-center space-x-2">
+            <button (click)="openEditModal(professor)" class="p-2 text-blue-600 hover:bg-blue-100 rounded-full">✏️</button>
+            <button (click)="deleteProfessor(professor.id)" class="p-2 text-red-600 hover:bg-red-100 rounded-full">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modales similares a estudiantes-management -->
+<div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-auto">
+    <div class="flex justify-between items-center p-4 border-b">
+      <h3 class="text-xl font-semibold">Añadir Nuevo Profesor</h3>
+      <button (click)="closeModal()" class="p-1 hover:bg-gray-200 rounded-full">✕</button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div><label class="block text-sm font-medium mb-1">Nombre Completo</label>
+        <input [(ngModel)]="professorForm.nombre" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+      <div><label class="block text-sm font-medium mb-1">Código</label>
+        <input [(ngModel)]="professorForm.codigo" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+      <div><label class="block text-sm font-medium mb-1">Correo Electrónico</label>
+        <input [(ngModel)]="professorForm.email" type="email" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+      <div><label class="block text-sm font-medium mb-1">Especialidad</label>
+        <input [(ngModel)]="professorForm.especialidad" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+      <div><label class="block text-sm font-medium mb-1">Contraseña</label>
+        <input [(ngModel)]="professorForm.password" type="password" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+    </div>
+    <div class="flex justify-end items-center p-4 border-t space-x-2">
+      <button (click)="closeModal()" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Cancelar</button>
+      <button (click)="saveProfessor()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-auto">
+    <div class="flex justify-between items-center p-4 border-b">
+      <h3 class="text-xl font-semibold">Editar Profesor</h3>
+      <button (click)="closeModal()" class="p-1 hover:bg-gray-200 rounded-full">✕</button>
+    </div>
+    <div class="p-6 space-y-4">
+      <div><label class="block text-sm font-medium mb-1">Nombre Completo</label>
+        <input [(ngModel)]="professorForm.nombre" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+      <div><label class="block text-sm font-medium mb-1">Código</label>
+        <input [(ngModel)]="professorForm.codigo" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+      <div><label class="block text-sm font-medium mb-1">Correo Electrónico</label>
+        <input [(ngModel)]="professorForm.email" type="email" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+      <div><label class="block text-sm font-medium mb-1">Especialidad</label>
+        <input [(ngModel)]="professorForm.especialidad" type="text" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+      <div><label class="block text-sm font-medium mb-1">Contraseña (dejar vacío para no cambiar)</label>
+        <input [(ngModel)]="professorForm.password" type="password" class="mt-1 w-full border-gray-300 rounded-md shadow-sm p-2"></div>
+    </div>
+    <div class="flex justify-end items-center p-4 border-t space-x-2">
+      <button (click)="closeModal()" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">Cancelar</button>
+      <button (click)="updateProfessor()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Actualizar</button>
+    </div>
+  </div>
+</div>
+
