@@ -3,8 +3,6 @@ package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Admin;
@@ -20,12 +18,14 @@ import com.example.demo.service.ProfessorService;
 import com.example.demo.repository.CursoRepository;
 import com.example.demo.repository.ProfessorRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/admin")
+@RestController
+@RequestMapping("/api/admin")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AdminController {
 
     private final AdminService adminService;
@@ -54,106 +54,119 @@ public class AdminController {
     // DASHBOARD
     // ===========================
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        model.addAttribute("students", studentService.findAll());
+    public ResponseEntity<Map<String, Object>> dashboard() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("students", studentService.findAll());
         List<Professor> professors = professorService.findAll();
-        model.addAttribute("professors", professors);
-        // También exponemos la lista con la clave en español porque los templates la usan así
-        model.addAttribute("profesores", professors);
-        model.addAttribute("admins", adminService.findAll());
-        model.addAttribute("cursos", cursoRepository.findAll());
-        return "administrador/dashboard";
+        data.put("professors", professors);
+        data.put("profesores", professors);
+        data.put("admins", adminService.findAll());
+        data.put("cursos", cursoRepository.findAll());
+        return ResponseEntity.ok(data);
     }
 
     // ===========================
     // CRUD STUDENTS
     // ===========================
+    @GetMapping("/students")
+    public ResponseEntity<List<Student>> getAllStudents() {
+        return ResponseEntity.ok(studentService.findAll());
+    }
+
     @PostMapping("/students")
-    @ResponseBody
-    public Student createStudent(@RequestBody Student student) {
-        return studentService.save(student);
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        return ResponseEntity.ok(studentService.save(student));
     }
 
     @GetMapping("/students/{id}")
-    @ResponseBody
-    public Student getStudent(@PathVariable Long id) {
-        return studentService.findById(id).orElseThrow(() -> new IllegalStateException("Estudiante no encontrado"));
+    public ResponseEntity<Student> getStudent(@PathVariable Long id) {
+        return studentService.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/students/{id}")
-    @ResponseBody
-    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
-        return studentService.update(id, student);
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student student) {
+        return ResponseEntity.ok(studentService.update(id, student));
     }
 
     @DeleteMapping("/students/{id}")
-    @ResponseBody
-    public String deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<String> deleteStudent(@PathVariable Long id) {
         studentService.delete(id);
-        return "Estudiante eliminado";
+        return ResponseEntity.ok("Estudiante eliminado");
     }
 
     // ===========================
     // CRUD PROFESSORS
     // ===========================
+    @GetMapping("/profesores")
+    public ResponseEntity<List<Professor>> getAllProfessors() {
+        return ResponseEntity.ok(professorService.findAll());
+    }
+
     @PostMapping("/profesores")
-    @ResponseBody
-    public Professor createProfessor(@RequestBody Professor professor) {
-        return professorService.create(professor);
+    public ResponseEntity<Professor> createProfessor(@RequestBody Professor professor) {
+        return ResponseEntity.ok(professorService.create(professor));
     }
 
     @GetMapping("/profesores/{id}")
-    @ResponseBody
-    public Professor getProfessor(@PathVariable Long id) {
-        return professorService.getById(id).orElseThrow(() -> new IllegalStateException("Profesor no encontrado"));
+    public ResponseEntity<Professor> getProfessor(@PathVariable Long id) {
+        return professorService.getById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/profesores/{id}")
-    @ResponseBody
-    public Professor updateProfessor(@PathVariable Long id, @RequestBody Professor professor) {
-        return professorService.update(id, professor);
+    public ResponseEntity<Professor> updateProfessor(@PathVariable Long id, @RequestBody Professor professor) {
+        return ResponseEntity.ok(professorService.update(id, professor));
     }
 
     @DeleteMapping("/profesores/{id}")
-    @ResponseBody
-    public String deleteProfessor(@PathVariable Long id) {
+    public ResponseEntity<String> deleteProfessor(@PathVariable Long id) {
         professorService.delete(id);
-        return "Profesor eliminado";
+        return ResponseEntity.ok("Profesor eliminado");
     }
 
     // ===========================
     // CRUD ADMINS
     // ===========================
+    @GetMapping("/admins")
+    public ResponseEntity<List<Admin>> getAllAdmins() {
+        return ResponseEntity.ok(adminService.findAll());
+    }
+
     @PostMapping("/admins")
-    @ResponseBody
-    public Admin createAdmin(@RequestBody Admin admin) {
-        return adminService.create(admin);
+    public ResponseEntity<Admin> createAdmin(@RequestBody Admin admin) {
+        return ResponseEntity.ok(adminService.create(admin));
     }
 
     @GetMapping("/admins/{id}")
-    @ResponseBody
-    public Admin getAdmin(@PathVariable Long id) {
-        return adminService.findById(id).orElseThrow(() -> new IllegalStateException("Administrador no encontrado"));
+    public ResponseEntity<Admin> getAdmin(@PathVariable Long id) {
+        return adminService.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/admins/{id}")
-    @ResponseBody
-    public Admin updateAdmin(@PathVariable Long id, @RequestBody Admin admin) {
-        return adminService.update(id, admin);
+    public ResponseEntity<Admin> updateAdmin(@PathVariable Long id, @RequestBody Admin admin) {
+        return ResponseEntity.ok(adminService.update(id, admin));
     }
 
     @DeleteMapping("/admins/{id}")
-    @ResponseBody
-    public String deleteAdmin(@PathVariable Long id) {
+    public ResponseEntity<String> deleteAdmin(@PathVariable Long id) {
         adminService.delete(id);
-        return "Administrador eliminado";
+        return ResponseEntity.ok("Administrador eliminado");
     }
 
     // ===========================
     // CRUD CURSOS
     // ===========================
+    @GetMapping("/cursos")
+    public ResponseEntity<List<Curso>> getAllCursos() {
+        return ResponseEntity.ok(cursoRepository.findAll());
+    }
+
     @PostMapping("/cursos")
-    @ResponseBody
     public ResponseEntity<?> createCurso(@RequestBody Map<String, Object> payload) {
         try {
             Curso curso = new Curso();
@@ -186,11 +199,10 @@ public class AdminController {
         return curso.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/cursos/update")
-    public ResponseEntity<String> updateCurso(@RequestBody Map<String, Object> payload) {
+    @PutMapping("/cursos/{id}")
+    public ResponseEntity<?> updateCurso(@PathVariable Long id, @RequestBody Map<String, Object> payload) {
         try {
-            Long cursoId = Long.valueOf(payload.get("id").toString());
-            Optional<Curso> cursoExistenteOpt = cursoRepository.findById(cursoId);
+            Optional<Curso> cursoExistenteOpt = cursoRepository.findById(id);
 
             if (!cursoExistenteOpt.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Curso no encontrado");
@@ -217,8 +229,8 @@ public class AdminController {
                 curso.setProfesor(null);
             }
 
-            cursoRepository.save(curso);
-            return ResponseEntity.ok("Curso actualizado exitosamente");
+            Curso updatedCurso = cursoRepository.save(curso);
+            return ResponseEntity.ok(updatedCurso);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -227,12 +239,11 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/cursos/delete")
-    public ResponseEntity<String> deleteCurso(@RequestBody Map<String, Long> payload) {
+    @DeleteMapping("/cursos/{id}")
+    public ResponseEntity<String> deleteCurso(@PathVariable Long id) {
         try {
-            Long cursoId = payload.get("id");
-            if (cursoRepository.existsById(cursoId)) {
-                cursoRepository.deleteById(cursoId);
+            if (cursoRepository.existsById(id)) {
+                cursoRepository.deleteById(id);
                 return ResponseEntity.ok("Curso eliminado exitosamente");
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)

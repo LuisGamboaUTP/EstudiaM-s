@@ -5,19 +5,14 @@ import com.example.demo.model.Curso;
 import com.example.demo.service.ProfessorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Optional;
 
-@Controller
-@RequestMapping("/profesor")
+@RestController
+@RequestMapping("/api/profesor")
+@CrossOrigin(origins = "http://localhost:4200")
 public class ProfesorController {
 
     private final ProfessorService service;
@@ -29,83 +24,38 @@ public class ProfesorController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model, Authentication authentication) {
+    public ResponseEntity<?> dashboard(Authentication authentication) {
         String email = (authentication != null) ? authentication.getName() : null;
         if (email != null) {
             Optional<Professor> opt = service.findByEmail(email);
             if (opt.isPresent()) {
                 Professor profesor = opt.get();
-                model.addAttribute("profesor", profesor);
-                // cargar cursos asignados al profesor y exponerlos al modelo
                 java.util.List<Curso> cursos = cursoRepository.findByProfesorId(profesor.getId());
-                model.addAttribute("cursos", cursos);
-                return "profesor/dashboard";
+                java.util.Map<String, Object> data = new java.util.HashMap<>();
+                data.put("profesor", profesor);
+                data.put("cursos", cursos);
+                return ResponseEntity.ok(data);
             }
         }
-        // fallback: redirigir al login si no se encuentra el profesor
-        return "redirect:/login?error=no_profesor";
+        return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).body("Profesor no encontrado");
     }
 
-    @GetMapping("/configuracion")
-    public String showConfiguracion(Authentication authentication, Model model) {
+    @GetMapping("/profile")
+    public ResponseEntity<Professor> getProfile(Authentication authentication) {
         String email = authentication != null ? authentication.getName() : null;
         if (email != null) {
-            service.findByEmail(email).ifPresent(professor -> {
-                model.addAttribute("profesor", professor);
-            });
+            return service.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
         }
-        return "profesor/configuracion";
-    }
-
-    @GetMapping("/cursos")
-    public String showCursos(Authentication authentication, Model model) {
-        String email = authentication != null ? authentication.getName() : null;
-        if (email != null) {
-            service.findByEmail(email).ifPresent(professor -> {
-                model.addAttribute("profesor", professor);
-                java.util.List<Curso> cursos = cursoRepository.findByProfesorId(professor.getId());
-                model.addAttribute("cursos", cursos);
-            });
-        }
-        return "profesor/dashboard"; // la vista de cursos está en dashboard
-    }
-
-    @GetMapping("/chat")
-    public String showChat(Authentication authentication, Model model) {
-        String email = authentication != null ? authentication.getName() : null;
-        if (email != null) {
-            service.findByEmail(email).ifPresent(professor -> model.addAttribute("profesor", professor));
-        }
-        return "profesor/chat";
-    }
-
-    @GetMapping("/calendario")
-    public String showCalendario(Authentication authentication, Model model) {
-        String email = authentication != null ? authentication.getName() : null;
-        if (email != null) {
-            service.findByEmail(email).ifPresent(professor -> model.addAttribute("profesor", professor));
-        }
-        return "profesor/calendario";
-    }
-
-    @GetMapping("/gestion-curso")
-    public String gestionCurso(@RequestParam(name = "id", required = false) Long id, Authentication authentication, Model model) {
-        String email = authentication != null ? authentication.getName() : null;
-        if (email != null) {
-            service.findByEmail(email).ifPresent(professor -> model.addAttribute("profesor", professor));
-        }
-        if (id != null) {
-            cursoRepository.findById(id).ifPresent(curso -> model.addAttribute("curso", curso));
-        }
-        return "profesor/gestion-curso";
+        return ResponseEntity.status(org.springframework.http.HttpStatus.UNAUTHORIZED).build();
     }
 
     @PutMapping("/profile")
-    @ResponseBody
-    public Professor updateProfile(Authentication authentication, @RequestBody Professor changes) {
+    public ResponseEntity<Professor> updateProfile(Authentication authentication, @RequestBody Professor changes) {
         String email = authentication.getName();
         Professor professor = service.findByEmail(email).orElseThrow(() -> new IllegalStateException("Profesor no encontrado"));
-        return service.update(professor.getId(), changes);
+        return ResponseEntity.ok(service.update(professor.getId(), changes));
     }
 
     @GetMapping
