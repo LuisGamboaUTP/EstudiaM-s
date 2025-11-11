@@ -1,59 +1,23 @@
-# AngularFrontend
+# Documentación del Frontend (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.1.
+Este documento proporciona una descripción detallada de la aplicación frontend de Angular, centrándose específicamente en el flujo de autenticación de usuarios.
 
-## Development server
+## Estructura del Proyecto
 
-To start a local development server, run:
+Los archivos principales relacionados con la autenticación se encuentran en el directorio `src/app/`:
 
-```bash
-ng serve
-```
+-   **`components/login/`**: Aquí reside el `LoginComponent`, que es responsable de renderizar el formulario de inicio de sesión y capturar las credenciales del usuario (nombre de usuario y contraseña).
+-   **`services/auth.service.ts`**: Este servicio actúa como un intermediario entre los componentes y el backend. Contiene la lógica para enviar las solicitudes de inicio de sesión, almacenar el token JWT recibido y gestionar el estado de autenticación del usuario.
+-   **`interceptors/jwt.interceptor.ts`**: Un interceptor de HTTP que se ejecuta para cada solicitud saliente. Su función es añadir automáticamente el token JWT en la cabecera `Authorization` de las peticiones dirigidas a rutas protegidas del backend. Esto evita tener que añadir el token manualmente en cada llamada.
+-   **`guards/auth.guard.ts`**: Es un "guardián de ruta". Antes de que el usuario pueda acceder a una ruta protegida (como un dashboard), este guardián comprueba si existe un token de autenticación válido. Si el usuario no está autenticado, lo redirige a la página de inicio de sesión.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Flujo de Autenticación
 
-## Code scaffolding
+El proceso de inicio de sesión sigue estos pasos:
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+1.  **Ingreso de Credenciales**: El usuario introduce su nombre de usuario y contraseña en el formulario presentado por `LoginComponent`.
+2.  **Llamada al Servicio de Autenticación**: Al enviar el formulario, `LoginComponent` invoca el método `login()` del `AuthService`, pasándole las credenciales.
+3.  **Solicitud a la API del Backend**: `AuthService` realiza una solicitud HTTP POST al endpoint `/authenticate` del backend. El cuerpo de esta solicitud contiene las credenciales del usuario en formato JSON.
+4.  **Almacenamiento del Token**: Si las credenciales son correctas, el backend responde con un token JWT. El `AuthService` recibe este token y lo guarda de forma segura en el almacenamiento local (`localStorage`) del navegador.
+5.  **Intercepción de Solicitudes Futuras**: A partir de este momento, cada vez que la aplicación necesite acceder a un recurso protegido del backend, el `JwtInterceptor` interceptará la solicitud HTTP y añadirá el token JWT en la cabecera `Authorization` con el formato `Bearer [token]`.
+6.  **Protección de Rutas**: Si el usuario intenta navegar directamente a una URL protegida, el `AuthGuard` se activa. Verifica la presencia y validez del token en `localStorage`. Si el token no es válido o no existe, el guardián cancela la navegación y redirige al usuario a la página de inicio de sesión.
